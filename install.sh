@@ -197,6 +197,12 @@ do
 	read SSH_PORT
 	sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
+
+	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none]:"
+	read SYSLOG_SERV
+	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
+	read MAX_SPACE
+	configure_rsyslog $SYSLOG_SERV $MAX_SPACE
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
