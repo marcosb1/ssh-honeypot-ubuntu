@@ -150,9 +150,34 @@ function finalize_configuration {
 	cd $STARTING_DIRECTORY
 }
 
-# Point to Syslog/Management Server
-function point_syslog {
+# Configure RSYSLOG
+function configure_rsyslog {
+	#SYSLOG = $1
+	#DISK_SPACE = $2
 	
+	echo "Configuring RSYSLOG..."
+	
+	# Check Inputs
+	if [ -z $2 ]
+	then
+		$2="1"
+	fi
+	
+	if [[ $1 && $2 ]]
+	then
+		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
+		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+		echo "#HONEYPOT CONFIGURATION START" >> /etc/rsyslog.conf
+		echo "\$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
+		echo "\$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
+		echo "\$ActionQueueMaxDiskSpace ${2}g" >> /etc/rsyslog.conf
+		echo "\$ActionQueueSaveOnShutdown on" >> /etc/rsyslog.conf
+		echo "\$ActionQueueType LinkedList" >> /etc/rsyslog.conf
+		echo "\$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
+		echo "#HONEYPOT CONFIGURATION END" >> /etc/rsyslog.conf
+		echo "*.* @@${1}:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
+		service rsyslog restart
+	fi
 }
 
 #################################################################################################
