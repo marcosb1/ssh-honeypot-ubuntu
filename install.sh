@@ -50,8 +50,8 @@ function display_intro {
 # Install dependencies 
 function install_dependencies {
 	echo "Installing dependencies..."
-	apt-get update &> /dev/null
-	apt-get install wget make zlib1g-dev libssl-dev policycoreutils &> /dev/null
+	apt-get update
+	apt-get install wget make zlib1g-dev libssl-dev policycoreutils
 }
 
 # Create directory structure
@@ -197,11 +197,6 @@ do
 	read SSH_PORT
 	sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
-	
-	read SYSLOG_SERV
-	sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
-	sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
-	echo "*.* @@${SYSLOG_SERV}:514" > /etc/rsyslog.d/00-honeypot.conf
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
