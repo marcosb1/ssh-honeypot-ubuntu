@@ -51,7 +51,7 @@ function display_intro {
 function install_dependencies {
 	echo "Installing dependencies..."
 	apt-get update
-	apt-get install wget make zlib1g-dev libssl-dev policycoreutils -y
+	apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 }
 
 # Create directory structure
